@@ -10,10 +10,6 @@ from starlette.status import HTTP_403_FORBIDDEN
 
 app = FastAPI()
 
-# curl -X POST -H "X-API-Key: GZZdNd8EsxplscRYd6" -F "file=@List.md" http://localhost:8000/upload_markdown/
-
-# # Define your API key
-# API_KEY = "GZZdNd8EsxplscRYd6"
 # Read the API key from an environment variable
 API_KEY = os.environ.get("API_KEY")
 
