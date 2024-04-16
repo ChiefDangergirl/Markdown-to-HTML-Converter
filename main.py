@@ -50,16 +50,57 @@ async def upload_markdown(
     # Read the uploaded Markdown file content
     markdown_content = await file.read()
 
+    lines = markdown_content.decode("utf-8").split("\n")
+
+    # Filter out lines starting with "```" or "---"
+    filtered_lines = [
+        line
+        for line in lines
+        if not line.startswith("```") and not line.startswith("---")
+    ]
+
+    result = "\n".join(filtered_lines)
+
     # Convert Markdown to HTML
-    html_content = markdown.markdown(markdown_content.decode("utf-8"))
+    html_content = markdown.markdown(result)
 
     # Generate a random alphanumeric ID
     random_id = generate_random_id()
 
+    # Set the desired font family
+    font_family = "Arial, sans-serif"
+
+    # Wrap the HTML content with a style tag to set the font family
+    html_with_font = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            body {{
+                font-family: {font_family};
+            }}
+        </style>
+    </head>
+    <body>
+    {html_content}
+    </body>
+    </html>
+    """
+
     # Save HTML content as a static page
     static_page_path = f"static/{random_id}.html"
     with open(static_page_path, "w") as f:
-        f.write(html_content)
+        f.write(html_with_font)
+        f.close()
+
+    # Save HTML content as a static page
+    static_md_page_path = f"static/{random_id}.md"
+    with open(static_md_page_path, "w") as f:
+        f.write(markdown_content.decode("utf-8"))
+        f.close()
 
     # Return the URL to access the static page
     return {"url": f"/static/{random_id}.html"}
